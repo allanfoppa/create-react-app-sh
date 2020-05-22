@@ -33,8 +33,9 @@ function installReactRouterDom(){
             echo $textColorBlue"O pacote do react-router-dom não será instalado."$endOfText
         ;;
         n|N)
+            cd $2$1
             echo $textColorBlue"O pacote do react-router-dom será instalado."$endOfText
-            # npm install react-router-dom
+            npm install react-router-dom --save
         ;;
         *|"")
             echo "Aprende a ler o que está sendo pedido o praga dos inferno"
@@ -49,8 +50,9 @@ function installAxios(){
 
     case "$responseApi" in
         s|S)
+            cd $2$1
             echo $textColorBlue"O pacote do axios será instalado."$endOfText
-            # npm install axios
+            npm install axios --save
         ;;
         n|N)
             echo $textColorBlue"O pacote do axios não será instalado."$endOfText
