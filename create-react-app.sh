@@ -14,13 +14,16 @@ endOfText=$(tput sgr 0)
 
 ## PARÂMETROS A SEREM PASSADOS
 ## $1 = nome da aplicação
-## $2 = caminho da aplicação
 
 ## FUNÇÕES DO SCRIPT
 
 # USA O GERADOR DE APP DO REACT PARA COMEÇAR O PROJETO
 function createReactApp(){
+    echo $textColorBlue"createReactApp "$PWD$endOfText
     npx create-react-app $1
+
+    mkdir $PWD$1 && cd $PWD$1
+        mkdir src
 }
 
 # INSTALA O PACOTE REACT-ROUTER-DOM
@@ -33,14 +36,24 @@ function installReactRouterDom(){
             echo $textColorBlue"O pacote do react-router-dom não será instalado."$endOfText
         ;;
         n|N)
-            cd $2$1
+            echo $textColorBlue"installReactRouterDom "$PWD$endOfText
+            cd $PWD$1
+            echo $textColorBlue"installReactRouterDom apos o cd "$PWD$endOfText
             echo $textColorBlue"O pacote do react-router-dom será instalado."$endOfText
-            npm install react-router-dom --save
+            # npm install react-router-dom --save
         ;;
         *|"")
             echo "Aprende a ler o que está sendo pedido o praga dos inferno"
         ;;
     esac
+
+    # CRIA UMA PASTA PAGES EM SRC SE O PROJETO NÃO FOR LPA SIMPLES
+    if [ $responseLpa == 'n' ] || [ $responseLpa == 'N' ]; then
+        cd $PWD/src
+            mkdir pages
+
+        cd ../
+    fi
 }
 
 # INSTALA O PACOTE AXIOS
@@ -50,9 +63,8 @@ function installAxios(){
 
     case "$responseApi" in
         s|S)
-            cd $2$1
             echo $textColorBlue"O pacote do axios será instalado."$endOfText
-            npm install axios --save
+            # npm install axios --save
         ;;
         n|N)
             echo $textColorBlue"O pacote do axios não será instalado."$endOfText
@@ -61,6 +73,13 @@ function installAxios(){
             echo "Aprende a ler o que está sendo pedido o praga dos inferno"
         ;;
     esac
+
+    # CRIAR UMA PASTA SERVICES EM SRC SE O PROJETO FOR CONSUMIR API
+    if [ $responseApi == 's' ] || [ $responseApi == 'S' ]; then
+        cd $PWD/src
+            mkdir services
+        cd ../
+    fi
 }
 
 # EXCLUI ARQUIVOS QUE NÃO VÃO SER UTILIZADOS DO PROJETO
@@ -107,23 +126,23 @@ function cleanMainFolder(){
 
 # NAVEGA ENTRE DIRETORIOS PARA EXCLUIR OS ARQUIVOS
 function cleanProject(){
-    cd $2$1/src/
+    cd $PWD/src/
     cleanSrcFolder
 
     cd ../
 
-    cd $2$1/public
+    cd $PWD/public
     cleanPublicFolder
 
     cd ../
 
     cleanMainFolder
 
-    vscodePath=$2$1
+    vscodePath=$PWD$1
 }
 
 # ENTRA NA PASTA DO PROJETO
-cd $2
+cd $PWD
 
 # CRIA O PROJETO
 createReactApp $1
@@ -135,25 +154,7 @@ installReactRouterDom
 installAxios
 
 # LIMPA O PROJETO
-cleanProject $1 $2
-
-# CRIA UMA PASTA PAGES EM SRC SE O PROJETO NÃO FOR LPA SIMPLES
-if [ $responseLpa == 'n' ] || [ $responseLpa == 'N' ]; then
-    cd src
-        mkdir pages
-
-    cd ../
-fi
-
-# CRIAR UMA PASTA SERVICES EM SRC SE O PROJETO FOR CONSUMIR API
-if [ $responseApi == 's' ] || [ $responseApi == 'S' ]; then
-    cd src
-        mkdir services
-            cd services
-            # CRIAR UM ARQUIVO API.JS EM SERVICES
-                touch api.js
-    cd ../
-fi
+cleanProject $1
 
 # ABRE O VSCODE
 code $vscodePath
